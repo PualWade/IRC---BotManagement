@@ -36,9 +36,21 @@ namespace IRC___Bot_management
         }
         private void Irc_OnRawMessage(object sender, IrcEventArgs e)
         {
+            if (ManagerBotHelp.checkCommand(e)) 
+            {
+                switch (e.Data.MessageArray[2])
+                {
+                    case "newBot":
+
+                        break;
+                    default:
+                }
+                e.Data.MessageArray[2]
+            }
+                
             WriteTextMessage(e);
         }
-
+        
         private void WriteTextError(IrcEventArgs e)
         {
             if (outText.InvokeRequired)
@@ -53,7 +65,6 @@ namespace IRC___Bot_management
         }
         private void WriteTextMessage(IrcEventArgs e)
         {
-
             if (outText.InvokeRequired)
             {
                 var d = new InOutText(WriteTextMessage);
@@ -61,25 +72,32 @@ namespace IRC___Bot_management
             }
             else
             {
-                outText.AppendText(string.Format("{2}   {0}: {1}\n", e.Data.Nick, e.Data.Message, DateTime.Now));
+                outText.AppendText(string.Format("\r\n{2}   {0}: {1}", e.Data.Nick, e.Data.Message, DateTime.Now));
             }
         }
-        private void BConnect_Click(object sender, EventArgs e)
+        private async void BConnect_Click(object sender, EventArgs e)
         {
             Irc.Connect(ipIn.Text, port);
             Irc.Login(usernameIn.Text, realnameIn.Text);
-            Irc.RfcJoin(channelIn.Text);
-            new Thread(new ThreadStart(Irc.Listen)).Start();
+            Irc.RfcJoin(channelIn.Text); 
+            await Task.Run(() => Irc.Listen());
         }
 
         private void BSend_Click(object sender, EventArgs e)
         {
-
+            Irc.SendMessage(SendType.Message, channelIn.Text, msgSend.Text);
+            outText.AppendText(string.Format("\r\n{2}   {0}: {1}", usernameIn.Text, msgSend.Text, DateTime.Now));
+            msgSend.Clear();
         }
 
         private void BSendBot_Click(object sender, EventArgs e)
         {
-            Irc.RfcPrivmsg(nickBot, "myPassword " + textBotSend.Text);
+            Irc.RfcPrivmsg(nickBot, "myPassword " + msgBotSend.Text); 
+            outText.AppendText(string.Format("\r\n{2}   {0}: {1}", usernameIn.Text, msgBotSend.Text, DateTime.Now));
+            msgBotSend.Clear();
+        }
+        private void textBotSend_TextChanged(object sender, EventArgs e)
+        { 
         }
     }
 }

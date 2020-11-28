@@ -33,11 +33,12 @@
             this.channelIn = new System.Windows.Forms.TextBox();
             this.usernameIn = new System.Windows.Forms.TextBox();
             this.realnameIn = new System.Windows.Forms.TextBox();
-            this.textSend = new System.Windows.Forms.TextBox();
+            this.msgSend = new System.Windows.Forms.TextBox();
             this.BConnect = new System.Windows.Forms.Button();
             this.BSend = new System.Windows.Forms.Button();
-            this.textBotSend = new System.Windows.Forms.TextBox();
+            this.msgBotSend = new System.Windows.Forms.TextBox();
             this.BSendBot = new System.Windows.Forms.Button();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // outText
@@ -45,7 +46,8 @@
             this.outText.Location = new System.Drawing.Point(153, 12);
             this.outText.Multiline = true;
             this.outText.Name = "outText";
-            this.outText.Size = new System.Drawing.Size(424, 392);
+            this.outText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.outText.Size = new System.Drawing.Size(819, 463);
             this.outText.TabIndex = 0;
             // 
             // ipIn
@@ -70,7 +72,7 @@
             this.usernameIn.Name = "usernameIn";
             this.usernameIn.Size = new System.Drawing.Size(135, 20);
             this.usernameIn.TabIndex = 3;
-            this.usernameIn.Text = "Paul_Wade";
+            this.usernameIn.Text = "Agrinutel";
             // 
             // realnameIn
             // 
@@ -80,12 +82,13 @@
             this.realnameIn.TabIndex = 4;
             this.realnameIn.Text = "Paul";
             // 
-            // textSend
+            // msgSend
             // 
-            this.textSend.Location = new System.Drawing.Point(153, 420);
-            this.textSend.Name = "textSend";
-            this.textSend.Size = new System.Drawing.Size(343, 20);
-            this.textSend.TabIndex = 5;
+            this.msgSend.Location = new System.Drawing.Point(153, 481);
+            this.msgSend.Multiline = true;
+            this.msgSend.Name = "msgSend";
+            this.msgSend.Size = new System.Drawing.Size(738, 68);
+            this.msgSend.TabIndex = 5;
             // 
             // BConnect
             // 
@@ -99,25 +102,26 @@
             // 
             // BSend
             // 
-            this.BSend.Location = new System.Drawing.Point(502, 418);
+            this.BSend.Location = new System.Drawing.Point(897, 481);
             this.BSend.Name = "BSend";
-            this.BSend.Size = new System.Drawing.Size(75, 23);
+            this.BSend.Size = new System.Drawing.Size(75, 69);
             this.BSend.TabIndex = 7;
             this.BSend.Text = "Send";
             this.BSend.UseVisualStyleBackColor = true;
             this.BSend.Click += new System.EventHandler(this.BSend_Click);
             // 
-            // textBotSend
+            // msgBotSend
             // 
-            this.textBotSend.Location = new System.Drawing.Point(153, 458);
-            this.textBotSend.Name = "textBotSend";
-            this.textBotSend.Size = new System.Drawing.Size(343, 20);
-            this.textBotSend.TabIndex = 8;
-            this.textBotSend.Text = "ping";
+            this.msgBotSend.Location = new System.Drawing.Point(153, 558);
+            this.msgBotSend.Name = "msgBotSend";
+            this.msgBotSend.Size = new System.Drawing.Size(738, 20);
+            this.msgBotSend.TabIndex = 8;
+            this.msgBotSend.Text = "ping";
+            this.msgBotSend.TextChanged += new System.EventHandler(this.textBotSend_TextChanged);
             // 
             // BSendBot
             // 
-            this.BSendBot.Location = new System.Drawing.Point(502, 456);
+            this.BSendBot.Location = new System.Drawing.Point(897, 556);
             this.BSendBot.Name = "BSendBot";
             this.BSendBot.Size = new System.Drawing.Size(75, 23);
             this.BSendBot.TabIndex = 9;
@@ -125,16 +129,37 @@
             this.BSendBot.UseVisualStyleBackColor = true;
             this.BSendBot.Click += new System.EventHandler(this.BSendBot_Click);
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Agrinutel",
+            "Selpock",
+            "Nidetom",
+            "Bidemsiq",
+            "Hotseck",
+            "Sharvolq",
+            "Melotubs",
+            "Madesolch",
+            "Lindibitex",
+            "Salomonixeu"});
+            this.comboBox1.Location = new System.Drawing.Point(12, 210);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(135, 21);
+            this.comboBox1.TabIndex = 10;
+            this.comboBox1.Text = "Agrinutel";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(635, 494);
+            this.ClientSize = new System.Drawing.Size(981, 591);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.BSendBot);
-            this.Controls.Add(this.textBotSend);
+            this.Controls.Add(this.msgBotSend);
             this.Controls.Add(this.BSend);
             this.Controls.Add(this.BConnect);
-            this.Controls.Add(this.textSend);
+            this.Controls.Add(this.msgSend);
             this.Controls.Add(this.realnameIn);
             this.Controls.Add(this.usernameIn);
             this.Controls.Add(this.channelIn);
@@ -154,11 +179,12 @@
         private System.Windows.Forms.TextBox channelIn;
         private System.Windows.Forms.TextBox usernameIn;
         private System.Windows.Forms.TextBox realnameIn;
-        private System.Windows.Forms.TextBox textSend;
+        private System.Windows.Forms.TextBox msgSend;
         private System.Windows.Forms.Button BConnect;
         private System.Windows.Forms.Button BSend;
-        private System.Windows.Forms.TextBox textBotSend;
+        private System.Windows.Forms.TextBox msgBotSend;
         private System.Windows.Forms.Button BSendBot;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 
