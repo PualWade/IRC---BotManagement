@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Meebey.SmartIrc4net;
+using MySql.Data.MySqlClient;
 
 namespace IRC___Bot_management
 {
@@ -39,10 +40,10 @@ namespace IRC___Bot_management
             string[] commands = ManagerBotHelp.checkCommand(e);
             if (commands != null) 
             {
-                switch (commands[2])
+                switch (commands[0])
                 {
                     case "newBot":
-
+                        AddBot_BD(commands[1], commands[2]);
                         break;
                     default:
                         break;
@@ -50,7 +51,25 @@ namespace IRC___Bot_management
             }
             WriteTextMessage(e);
         }
-        
+
+        private void AddBot_BD(string name,string realName)
+        {
+            DB db = new DB();
+            MySqlCommand command = new MySqlCommand("INSERT INTO `bots` (`name`, `realName`) VALUES (@name, @realname)", db.GetConnection());
+            
+            command.Parameters.Add("@name", MySqlDbType.VarChar).Value = name;
+            command.Parameters.Add("@realName", MySqlDbType.VarChar).Value = realName;
+
+            db.openConnection();
+
+            if (command.ExecuteNonQuery() == 1)
+                MessageBox.Show("Бот добавлен");
+            else 
+                MessageBox.Show("Бот не был добавлен");
+
+            db.closeConnection();
+        }
+
         private void WriteTextError(IrcEventArgs e)
         {
             if (outText.InvokeRequired)

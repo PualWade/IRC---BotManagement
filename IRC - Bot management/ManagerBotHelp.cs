@@ -11,8 +11,15 @@ namespace IRC___Bot_management
     {
         public static string[] checkCommand(IrcEventArgs e)
         {
-            if (e.Data.MessageArray[0] == "MyPassword") return e.Data.MessageArray.Skip(1).ToArray();
-            else return null;
+
+            if (e.Data.MessageArray != null)
+            {
+                if (e.Data.MessageArray[0] == "MyPassword") 
+                    return e.Data.MessageArray.Skip(1).ToArray();
+                else 
+                    return null; 
+            }
+            return null;
         }
     }
 }
