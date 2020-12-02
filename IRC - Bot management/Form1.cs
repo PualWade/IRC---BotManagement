@@ -36,18 +36,18 @@ namespace IRC___Bot_management
         }
         private void Irc_OnRawMessage(object sender, IrcEventArgs e)
         {
-            if (ManagerBotHelp.checkCommand(e)) 
+            string[] commands = ManagerBotHelp.checkCommand(e);
+            if (commands != null) 
             {
-                switch (e.Data.MessageArray[2])
+                switch (commands[2])
                 {
                     case "newBot":
 
                         break;
                     default:
+                        break;
                 }
-                e.Data.MessageArray[2]
             }
-                
             WriteTextMessage(e);
         }
         

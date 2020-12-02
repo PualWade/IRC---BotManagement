@@ -9,10 +9,10 @@ namespace IRC___Bot_management
 {
     public class ManagerBotHelp
     {
-        public static bool checkCommand(IrcEventArgs e)
+        public static string[] checkCommand(IrcEventArgs e)
         {
-            if (e.Data.MessageArray[0] == "MyPassword") return true;
-            else return false;
+            if (e.Data.MessageArray[0] == "MyPassword") return e.Data.MessageArray.Skip(1).ToArray();
+            else return null;
         }
     }
 }
