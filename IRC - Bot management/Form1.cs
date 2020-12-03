@@ -21,6 +21,9 @@ namespace IRC___Bot_management
         const int port = 6667;
         delegate void InOutText(IrcEventArgs e);
 
+        static DB db = new DB();
+        static MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT  `name`, `realName`, `mac`, `isOnline` FROM `bots` WHERE 1", db.GetConnection());
+        static DataTable table = new DataTable();
         public Form1()
         {
             Irc.Encoding = Encoding.UTF8;
@@ -178,17 +181,14 @@ namespace IRC___Bot_management
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            DB bd= new DB();
-            MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM `bots`",bd.GetConnection());
-            DataTable table = new DataTable();
 
-            adapter.Fill(table);
-            dataGridView1.DataSource = table;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            table.Clear();
+            adapter.Fill(table);
+            dataGridView1.DataSource = table;
         }
     }
 }
