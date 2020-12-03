@@ -42,8 +42,14 @@ namespace IRC___Bot_management
             {
                 switch (commands[0])
                 {
-                    case "newBot":
-                        AddBot_BD(commands[1], commands[2]);
+                    case "autentification":
+                        if (!IsBotExists(commands[3]))
+                            EditBot_DB(commands[1], commands[2], commands[3]);
+                        else
+                            EditBot_DB(commands[1], commands[2], commands[3]);
+                        break;
+                    case "isOnline":
+                        
                         break;
                     default:
                         break;
@@ -51,23 +57,74 @@ namespace IRC___Bot_management
             }
             WriteTextMessage(e);
         }
-
-        private void AddBot_BD(string name,string realName)
+        private void EditBot_DB(string name, string realName, string mac)
         {
             DB db = new DB();
-            MySqlCommand command = new MySqlCommand("INSERT INTO `bots` (`name`, `realName`) VALUES (@name, @realname)", db.GetConnection());
-            
-            command.Parameters.Add("@name", MySqlDbType.VarChar).Value = name;
-            command.Parameters.Add("@realName", MySqlDbType.VarChar).Value = realName;
 
-            db.openConnection();
+            DataTable table = new DataTable();
 
-            if (command.ExecuteNonQuery() == 1)
-                MessageBox.Show("Бот добавлен");
-            else 
-                MessageBox.Show("Бот не был добавлен");
+            MySqlDataAdapter adapter = new MySqlDataAdapter();
 
-            db.closeConnection();
+            MySqlCommand command1 = new MySqlCommand("SELECT * FROM `bots` WHERE `mac` LIKE @mac", db.GetConnection());
+            command1.Parameters.Add("@mac", MySqlDbType.VarChar).Value = mac;
+
+            adapter.SelectCommand = command1;
+                adapter.Fill(table);
+
+            if (table.Rows.Count > 0)
+            {
+                MySqlCommand command = new MySqlCommand("UPDATE `bots` SET `name`=@name,`realName`=@realName WHERE `mac`=@mac", db.GetConnection());
+
+                command.Parameters.Add("@name", MySqlDbType.VarChar).Value = name;
+                command.Parameters.Add("@realName", MySqlDbType.VarChar).Value = realName;
+                command.Parameters.Add("@mac", MySqlDbType.VarChar).Value = mac;
+
+
+                //db.openConnection();
+
+                //if (command.ExecuteNonQuery() == 1)
+                //    MessageBox.Show("Бот изменен");
+                //else
+                //    MessageBox.Show("Бот не был изменен");
+
+                //db.closeConnection();
+            }
+            else
+            {
+                MySqlCommand command = new MySqlCommand("INSERT INTO `bots` (`name`, `realName`, `mac`) VALUES (@name, @realname, @mac)", db.GetConnection());
+
+                command.Parameters.Add("@name", MySqlDbType.VarChar).Value = name;
+                command.Parameters.Add("@realName", MySqlDbType.VarChar).Value = realName;
+                command.Parameters.Add("@mac", MySqlDbType.VarChar).Value = mac;
+
+                //db.openConnection();
+
+                //if (command.ExecuteNonQuery() == 1)
+                //    MessageBox.Show("Бот изменен");
+                //else
+                //    MessageBox.Show("Бот не был изменен");
+
+                //db.closeConnection();
+            }
+        }
+        private bool IsBotExists(string mac)
+        {
+            DB db = new DB();
+
+            DataTable table = new DataTable();
+
+            MySqlDataAdapter adapter = new MySqlDataAdapter();
+
+            MySqlCommand command = new MySqlCommand("SELECT * FROM `bots` WHERE `mac` = @mac", db.GetConnection());
+            command.Parameters.Add("@mac", MySqlDbType.VarChar).Value = mac;
+
+            adapter.SelectCommand = command;
+            adapter.Fill(table);
+
+            if (table.Rows.Count > 0)
+                return true;
+            else
+                return false;
         }
 
         private void WriteTextError(IrcEventArgs e)
@@ -117,6 +174,21 @@ namespace IRC___Bot_management
         }
         private void textBotSend_TextChanged(object sender, EventArgs e)
         { 
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            DB bd= new DB();
+            MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM `bots`",bd.GetConnection());
+            DataTable table = new DataTable();
+
+            adapter.Fill(table);
+            dataGridView1.DataSource = table;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

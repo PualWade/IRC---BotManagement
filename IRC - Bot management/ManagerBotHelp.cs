@@ -14,7 +14,7 @@ namespace IRC___Bot_management
 
             if (e.Data.MessageArray != null)
             {
-                if (e.Data.MessageArray[0] == "MyPassword") 
+                if (e.Data.MessageArray[0] == "myPassword") 
                     return e.Data.MessageArray.Skip(1).ToArray();
                 else 
                     return null; 
