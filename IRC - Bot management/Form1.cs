@@ -181,14 +181,41 @@ namespace IRC___Bot_management
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // Отображение БД
+            table.Clear();
+            adapter.Fill(table);
+            dataGridView1.DataSource = table;
 
+            // Снять выделения строк
+            dataGridView1.CurrentCell = null;
+
+            // Не сортировать столбцы
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            {
+                //dataGridView1.Rows[2].Cells[3].Value = (bool)false;
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            // Отображение БД
             table.Clear();
             adapter.Fill(table);
             dataGridView1.DataSource = table;
+
+            // Снять выделения строк
+            dataGridView1.CurrentCell = null;
+        }
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (MouseButtons != MouseButtons.None)
+                ((DataGridView)sender).CurrentCell = null;
+        }
+
+        private void dataGridView1_MouseMove(object sender, MouseEventArgs e)
+        {
         }
     }
 }
