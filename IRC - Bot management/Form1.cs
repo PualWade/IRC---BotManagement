@@ -20,10 +20,14 @@ namespace IRC___Bot_management
         static IrcClient Irc = new IrcClient();
         const int port = 6667;
         delegate void InOutText(IrcEventArgs e);
+        delegate void UpdateTableDelegate(DataTable table);
 
         static DB db = new DB();
         static MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT  `name`, `realName`, `mac`, `isOnline` FROM `bots` WHERE 1", db.GetConnection());
         static DataTable table = new DataTable();
+
+        static bool flag;
+
         public Form1()
         {
             Irc.Encoding = Encoding.UTF8;
@@ -52,7 +56,8 @@ namespace IRC___Bot_management
                             EditBot_DB(commands[1], commands[2], commands[3]);
                         break;
                     case "isOnline":
-                        
+                        //Thread.Sleep(90 * 1000);
+                        //if
                         break;
                     default:
                         break;
@@ -76,39 +81,30 @@ namespace IRC___Bot_management
 
             if (table.Rows.Count > 0)
             {
-                MySqlCommand command = new MySqlCommand("UPDATE `bots` SET `name`=@name,`realName`=@realName WHERE `mac`=@mac", db.GetConnection());
+                MySqlCommand command = new MySqlCommand("UPDATE `bots` SET `name`=@name,`realName`=@realName,`isOnline`=@isOnline WHERE `mac`=@mac", db.GetConnection());
 
                 command.Parameters.Add("@name", MySqlDbType.VarChar).Value = name;
                 command.Parameters.Add("@realName", MySqlDbType.VarChar).Value = realName;
                 command.Parameters.Add("@mac", MySqlDbType.VarChar).Value = mac;
-
-
-                //db.openConnection();
-
-                //if (command.ExecuteNonQuery() == 1)
-                //    MessageBox.Show("Бот изменен");
-                //else
-                //    MessageBox.Show("Бот не был изменен");
-
-                //db.closeConnection();
+                command.Parameters.Add("@isOnline", MySqlDbType.VarChar).Value = "1";
             }
             else
             {
-                MySqlCommand command = new MySqlCommand("INSERT INTO `bots` (`name`, `realName`, `mac`) VALUES (@name, @realname, @mac)", db.GetConnection());
+                MySqlCommand command = new MySqlCommand("INSERT INTO `bots` (`name`, `realName`, `mac`, `isOnline`) VALUES (@name, @realname, @mac, @isOnline)", db.GetConnection());
 
                 command.Parameters.Add("@name", MySqlDbType.VarChar).Value = name;
                 command.Parameters.Add("@realName", MySqlDbType.VarChar).Value = realName;
                 command.Parameters.Add("@mac", MySqlDbType.VarChar).Value = mac;
-
-                //db.openConnection();
-
-                //if (command.ExecuteNonQuery() == 1)
-                //    MessageBox.Show("Бот изменен");
-                //else
-                //    MessageBox.Show("Бот не был изменен");
-
-                //db.closeConnection();
+                command.Parameters.Add("@isOnline", MySqlDbType.VarChar).Value = "1";
             }
+        }
+        private void SetIsOnlineBot_DB(string mac, string isOnline)
+        {
+            DB db = new DB();
+            MySqlCommand command = new MySqlCommand("UPDATE `bots` SET `isOnline`=@isOnline WHERE `mac`=@mac", db.GetConnection());
+
+            command.Parameters.Add("@mac", MySqlDbType.VarChar).Value = mac;
+            command.Parameters.Add("@isOnline", MySqlDbType.VarChar).Value = isOnline;
         }
         private bool IsBotExists(string mac)
         {
@@ -129,7 +125,24 @@ namespace IRC___Bot_management
             else
                 return false;
         }
+        private void UpdateTable(DataTable table)
+        {
+            if (dataGridView1.InvokeRequired)
+            {
+                var d = new UpdateTableDelegate(UpdateTable);
+                dataGridView1.Invoke(d, new object[] { table });
+            }
+            else
+            {
+                // Отображение БД
+                table.Clear();
+                adapter.Fill(table);
+                dataGridView1.DataSource = table;
 
+                // Снять выделения строк
+                dataGridView1.CurrentCell = null;
+            }
+        }
         private void WriteTextError(IrcEventArgs e)
         {
             if (outText.InvokeRequired)
@@ -178,17 +191,33 @@ namespace IRC___Bot_management
         private void textBotSend_TextChanged(object sender, EventArgs e)
         { 
         }
-
-        private void Form1_Load(object sender, EventArgs e)
+        
+        private async void Form1_Load(object sender, EventArgs e)
         {
-            // Отображение БД
-            table.Clear();
-            adapter.Fill(table);
-            dataGridView1.DataSource = table;
+            // Обновление таблицы каждые 5 секунд
+            await Task.Run(() =>
+            {
+                while (true)
+                {
+                    // Отображение БД
+                    UpdateTable(table);
+                    Thread.Sleep(5 * 1000);
+                }
+            });
+            // Запись ботов которые в сети
+            await Task.Run(() =>
+            {
+                bool localFlag = flag;
+                while (true)
+                {
+                    Thread.Sleep(60 * 1000);
+                    //
+                    if (flag == localFlag)
+                    {
 
-            // Снять выделения строк
-            dataGridView1.CurrentCell = null;
-
+                    }
+                }
+            });
             // Не сортировать столбцы
             foreach (DataGridViewColumn column in dataGridView1.Columns)
             {
@@ -196,24 +225,11 @@ namespace IRC___Bot_management
                 column.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            // Отображение БД
-            table.Clear();
-            adapter.Fill(table);
-            dataGridView1.DataSource = table;
-
-            // Снять выделения строк
-            dataGridView1.CurrentCell = null;
-        }
-
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             if (MouseButtons != MouseButtons.None)
                 ((DataGridView)sender).CurrentCell = null;
         }
-
         private void dataGridView1_MouseMove(object sender, MouseEventArgs e)
         {
         }
